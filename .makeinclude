@@ -1,0 +1,15 @@
+BoostSystemUtil.o: BoostSystemUtil.cpp BoostSystemUtil.h
+IoServicePool.o: IoServicePool.cpp IoServicePool.h IoThread.h
+IoThread.o: IoThread.cpp IoThread.h Log.h ThreadName.h
+Log.o: Log.cpp ThreadName.h Log.h
+Main.o: Main.cpp Log.h ProxyOptions.h TcpProxy.h IoServicePool.h \
+ ThreadName.h
+ProxyOptions.o: ProxyOptions.cpp ProxyOptions.h
+TcpProxy.o: TcpProxy.cpp Log.h TcpProxy.h IoServicePool.h \
+ TcpProxyClientAcceptor.h TcpProxySession.h TcpResolver.h ProxyOptions.h
+TcpProxyClientAcceptor.o: TcpProxyClientAcceptor.cpp BoostSystemUtil.h \
+ IoServicePool.h Log.h TcpProxyClientAcceptor.h TcpProxySession.h
+TcpProxySession.o: TcpProxySession.cpp BoostSystemUtil.h Log.h \
+ TcpProxySession.h ProxyOptions.h
+TcpResolver.o: TcpResolver.cpp BoostSystemUtil.h TcpResolver.h
+ThreadName.o: ThreadName.cpp ThreadName.h
