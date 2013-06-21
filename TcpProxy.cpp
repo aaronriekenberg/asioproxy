@@ -50,11 +50,6 @@ void TcpProxy::createAcceptors()
 
   TcpResolver tcpResolver;
 
-  // resolve remote endpoint
-  boost::asio::ip::tcp::endpoint remoteEndpoint(
-    tcpResolver.resolve(proxyOptions.getRemoteAddressPort()));
-  Log::getInfoInstance() << "remote endpoint " << remoteEndpoint;
-
   // resolve local endpoints
   std::vector<boost::asio::ip::tcp::endpoint> localEndpointVector;
   localEndpointVector.reserve(
@@ -76,7 +71,8 @@ void TcpProxy::createAcceptors()
                  [&] (const boost::asio::ip::tcp::endpoint& localEndpoint)
                  {
                    return TcpProxyClientAcceptor::create(
-                     m_ioServicePool, localEndpoint, remoteEndpoint);
+                     m_ioServicePool, localEndpoint,
+                     proxyOptions.getRemoteAddressPort());
                  });
 
   // start acceptors

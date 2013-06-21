@@ -10,13 +10,13 @@ TcpProxyClientAcceptor::SharedPtr
 TcpProxyClientAcceptor::create(
   IoServicePool& ioServicePool,
   const boost::asio::ip::tcp::endpoint& localEndpoint,
-  const boost::asio::ip::tcp::endpoint& remoteEndpoint)
+  const std::tuple<std::string, std::string>& remoteAddressAndPort)
 {
   return SharedPtr(
     new TcpProxyClientAcceptor(
       ioServicePool,
       localEndpoint,
-      remoteEndpoint));
+      remoteAddressAndPort));
 }
 
 TcpProxyClientAcceptor::~TcpProxyClientAcceptor()
@@ -37,10 +37,10 @@ void TcpProxyClientAcceptor::start()
 TcpProxyClientAcceptor::TcpProxyClientAcceptor(
   IoServicePool& ioServicePool,
   const boost::asio::ip::tcp::endpoint& localEndpoint,
-  const boost::asio::ip::tcp::endpoint& remoteEndpoint) :
+  const std::tuple<std::string, std::string>& remoteAddressAndPort) :
   m_ioServicePool(ioServicePool),
   m_acceptor(ioServicePool.getIoService(), localEndpoint),
-  m_remoteEndpoint(remoteEndpoint)
+  m_remoteAddressAndPort(remoteAddressAndPort)
 {
   if (Log::isDebugEnabled())
   {
@@ -54,7 +54,7 @@ void TcpProxyClientAcceptor::registerForAccept()
   auto pSession =
     TcpProxySession::create(
       m_ioServicePool.getIoService(),
-      m_remoteEndpoint);
+      m_remoteAddressAndPort);
   auto sharedThis = shared_from_this();
   m_acceptor.async_accept(
     pSession->getClientSocket(),

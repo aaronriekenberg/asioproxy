@@ -9,10 +9,10 @@ namespace asioproxy
 TcpProxySession::SharedPtr
 TcpProxySession::create(
   boost::asio::io_service& ioService,
-  const boost::asio::ip::tcp::endpoint& remoteEndpoint)
+  const std::tuple<std::string, std::string>& remoteAddressAndPort)
 {
   return SharedPtr(
-    new TcpProxySession(ioService, remoteEndpoint));
+    new TcpProxySession(ioService, remoteAddressAndPort));
 }
 
 TcpProxySession::~TcpProxySession()
@@ -36,17 +36,48 @@ void TcpProxySession::handleClientSocketAccepted()
     Log::getDebugInstance() << "handleClientSocketAccepted";
   }
 
+  if (ProxyOptions::getInstance().isNoDelay())
+  {
+    boost::asio::ip::tcp::no_delay noDelayOption(true);
+    m_clientSocket.set_option(noDelayOption);
+  }
+
+  std::stringstream clientToProxySS;
+  clientToProxySS << m_clientSocket.remote_endpoint()
+                  << " -> "
+                  << m_clientSocket.local_endpoint();
+  m_clientToProxyString = clientToProxySS.str();
+
+  Log::getInfoInstance()
+    << "connected client to proxy "
+    << m_clientToProxyString;
+
   auto sharedThis = shared_from_this();
-  m_ioService.dispatch(
-    [=] () { sharedThis->handleClientSocketAcceptedInIoThread(); });
+  boost::asio::ip::tcp::resolver::query query(
+    std::get<0>(m_remoteAddressAndPort),
+    std::get<1>(m_remoteAddressAndPort));
+  Log::getInfoInstance() 
+    << "begin resolving "
+    << std::get<0>(m_remoteAddressAndPort)
+    << ":"
+    << std::get<1>(m_remoteAddressAndPort);
+  m_resolver.async_resolve(
+    query,
+    [=] (const boost::system::error_code& error, 
+         boost::asio::ip::tcp::resolver::iterator iterator) 
+    { 
+      sharedThis->handleRemoteEndpointResolved(error, iterator);
+    }
+  );
 }
 
 TcpProxySession::TcpProxySession(
   boost::asio::io_service& ioService,
-  const boost::asio::ip::tcp::endpoint& remoteEndpoint) :
+  const std::tuple<std::string, std::string>& remoteAddressAndPort) :
   m_ioService(ioService),
   m_clientSocket(ioService),
-  m_remoteEndpoint(remoteEndpoint),
+  m_remoteAddressAndPort(remoteAddressAndPort),
+  m_resolver(ioService),
   m_remoteSocket(ioService),
   m_connectTimeoutTimer(ioService)
 {
@@ -90,44 +121,48 @@ void TcpProxySession::terminate()
   m_connectTimeoutTimer.cancel();
 }
 
-void TcpProxySession::handleClientSocketAcceptedInIoThread()
+void TcpProxySession::handleRemoteEndpointResolved(
+  const boost::system::error_code& error,
+  boost::asio::ip::tcp::resolver::iterator iterator)
 {
   if (Log::isDebugEnabled())
   {
-    Log::getDebugInstance() << "handleClientSocketAcceptedInIoThread";
+    Log::getDebugInstance() << "handleRemoteEndpointResolved";
   }
 
-  if (ProxyOptions::getInstance().isNoDelay())
+  if (error)
   {
-    boost::asio::ip::tcp::no_delay noDelayOption(true);
-    m_clientSocket.set_option(noDelayOption);
+    Log::getInfoInstance() 
+      << "failed to resolve "
+      << std::get<0>(m_remoteAddressAndPort)
+      << ":"
+      << std::get<1>(m_remoteAddressAndPort);
+    terminate();
   }
+  else
+  {
+    boost::asio::ip::tcp::endpoint remoteEndpoint = *iterator;
 
-  std::stringstream clientToProxySS;
-  clientToProxySS << m_clientSocket.remote_endpoint()
-                  << " -> "
-                  << m_clientSocket.local_endpoint();
-  m_clientToProxyString = clientToProxySS.str();
+    Log::getInfoInstance()
+      << "begin connect to remote "
+      << remoteEndpoint;
 
-  Log::getInfoInstance()
-    << "connect client to proxy "
-    << m_clientToProxyString;
+    auto sharedThis = shared_from_this();
+    m_remoteSocket.async_connect(
+      remoteEndpoint,
+      [=] (const boost::system::error_code& error) 
+      { 
+        sharedThis->handleConnectFinished(error);
+      });
 
-  auto sharedThis = shared_from_this();
-  m_remoteSocket.async_connect(
-    m_remoteEndpoint,
-    [=] (const boost::system::error_code& error) 
-    { 
-      sharedThis->handleConnectFinished(error);
-    });
-
-  m_connectTimeoutTimer.expires_from_now(
-    ProxyOptions::getInstance().getConnectTimeout());
-  m_connectTimeoutTimer.async_wait(
-    [=] (const boost::system::error_code& error)
-    {
-      sharedThis->handleConnectTimeout();
-    });
+    m_connectTimeoutTimer.expires_from_now(
+      ProxyOptions::getInstance().getConnectTimeout());
+    m_connectTimeoutTimer.async_wait(
+      [=] (const boost::system::error_code& error)
+      {
+        sharedThis->handleConnectTimeout();
+      });
+  }
 }
 
 void TcpProxySession::handleConnectTimeout()
@@ -188,7 +223,7 @@ void TcpProxySession::handleConnectFinished(
     m_proxyToRemoteString = proxyToRemoteSS.str();
 
     Log::getInfoInstance()
-      << "connect proxy to remote "
+      << "connected proxy to remote "
       << m_proxyToRemoteString;
 
     asyncReadFromClient();

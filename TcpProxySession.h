@@ -5,6 +5,7 @@
 #include <boost/asio/system_timer.hpp>
 #include <memory>
 #include <string>
+#include <tuple>
 #include <vector>
 
 namespace asioproxy
@@ -19,7 +20,7 @@ public:
 
   static SharedPtr create(
     boost::asio::io_service& ioService,
-    const boost::asio::ip::tcp::endpoint& remoteEndpoint);
+    const std::tuple<std::string, std::string>& remoteAddressAndPort);
 
   virtual ~TcpProxySession();
 
@@ -31,7 +32,7 @@ private:
 
   TcpProxySession(
     boost::asio::io_service& ioService,
-    const boost::asio::ip::tcp::endpoint& remoteEndpoint);
+    const std::tuple<std::string, std::string>& remoteAddressAndPort);
 
   TcpProxySession(const TcpProxySession& rhs) = delete;
 
@@ -39,7 +40,9 @@ private:
 
   void terminate();
 
-  void handleClientSocketAcceptedInIoThread();
+  void handleRemoteEndpointResolved(
+    const boost::system::error_code& error, 
+    boost::asio::ip::tcp::resolver::iterator iterator);
 
   void handleConnectTimeout();
 
@@ -68,7 +71,9 @@ private:
 
   boost::asio::ip::tcp::socket m_clientSocket;
 
-  boost::asio::ip::tcp::endpoint m_remoteEndpoint;
+  std::tuple<std::string, std::string> m_remoteAddressAndPort;
+
+  boost::asio::ip::tcp::resolver m_resolver;
 
   boost::asio::ip::tcp::socket m_remoteSocket;
 
