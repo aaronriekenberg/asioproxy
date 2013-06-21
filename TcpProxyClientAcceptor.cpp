@@ -9,14 +9,12 @@ namespace asioproxy
 TcpProxyClientAcceptor::SharedPtr
 TcpProxyClientAcceptor::create(
   IoServicePool& ioServicePool,
-  const boost::asio::ip::tcp::endpoint& localEndpoint,
-  const std::tuple<std::string, std::string>& remoteAddressAndPort)
+  const boost::asio::ip::tcp::endpoint& localEndpoint)
 {
   return SharedPtr(
     new TcpProxyClientAcceptor(
       ioServicePool,
-      localEndpoint,
-      remoteAddressAndPort));
+      localEndpoint));
 }
 
 TcpProxyClientAcceptor::~TcpProxyClientAcceptor()
@@ -36,11 +34,9 @@ void TcpProxyClientAcceptor::start()
 
 TcpProxyClientAcceptor::TcpProxyClientAcceptor(
   IoServicePool& ioServicePool,
-  const boost::asio::ip::tcp::endpoint& localEndpoint,
-  const std::tuple<std::string, std::string>& remoteAddressAndPort) :
+  const boost::asio::ip::tcp::endpoint& localEndpoint) :
   m_ioServicePool(ioServicePool),
-  m_acceptor(ioServicePool.getIoService(), localEndpoint),
-  m_remoteAddressAndPort(remoteAddressAndPort)
+  m_acceptor(ioServicePool.getIoService(), localEndpoint)
 {
   if (Log::isDebugEnabled())
   {
@@ -53,8 +49,7 @@ void TcpProxyClientAcceptor::registerForAccept()
 {
   auto pSession =
     TcpProxySession::create(
-      m_ioServicePool.getIoService(),
-      m_remoteAddressAndPort);
+      m_ioServicePool.getIoService());
   auto sharedThis = shared_from_this();
   m_acceptor.async_accept(
     pSession->getClientSocket(),

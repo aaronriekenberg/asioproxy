@@ -8,11 +8,10 @@ namespace asioproxy
 
 TcpProxySession::SharedPtr
 TcpProxySession::create(
-  boost::asio::io_service& ioService,
-  const std::tuple<std::string, std::string>& remoteAddressAndPort)
+  boost::asio::io_service& ioService)
 {
   return SharedPtr(
-    new TcpProxySession(ioService, remoteAddressAndPort));
+    new TcpProxySession(ioService));
 }
 
 TcpProxySession::~TcpProxySession()
@@ -52,15 +51,19 @@ void TcpProxySession::handleClientSocketAccepted()
     << "connected client to proxy "
     << m_clientToProxyString;
 
-  auto sharedThis = shared_from_this();
-  boost::asio::ip::tcp::resolver::query query(
-    std::get<0>(m_remoteAddressAndPort),
-    std::get<1>(m_remoteAddressAndPort));
+  const ProxyOptions::AddressAndPort& remoteAddressPort =
+    ProxyOptions::getInstance().getRemoteAddressPort();
+
   Log::getInfoInstance() 
     << "begin resolving "
-    << std::get<0>(m_remoteAddressAndPort)
+    << std::get<0>(remoteAddressPort)
     << ":"
-    << std::get<1>(m_remoteAddressAndPort);
+    << std::get<1>(remoteAddressPort);
+
+  boost::asio::ip::tcp::resolver::query query(
+    std::get<0>(remoteAddressPort),
+    std::get<1>(remoteAddressPort));
+  auto sharedThis = shared_from_this();
   m_resolver.async_resolve(
     query,
     [=] (const boost::system::error_code& error, 
@@ -72,11 +75,9 @@ void TcpProxySession::handleClientSocketAccepted()
 }
 
 TcpProxySession::TcpProxySession(
-  boost::asio::io_service& ioService,
-  const std::tuple<std::string, std::string>& remoteAddressAndPort) :
+  boost::asio::io_service& ioService) :
   m_ioService(ioService),
   m_clientSocket(ioService),
-  m_remoteAddressAndPort(remoteAddressAndPort),
   m_resolver(ioService),
   m_remoteSocket(ioService),
   m_connectTimeoutTimer(ioService)
@@ -132,11 +133,13 @@ void TcpProxySession::handleRemoteEndpointResolved(
 
   if (error)
   {
+    const ProxyOptions::AddressAndPort& remoteAddressPort =
+      ProxyOptions::getInstance().getRemoteAddressPort();
     Log::getInfoInstance() 
       << "failed to resolve "
-      << std::get<0>(m_remoteAddressAndPort)
+      << std::get<0>(remoteAddressPort)
       << ":"
-      << std::get<1>(m_remoteAddressAndPort);
+      << std::get<1>(remoteAddressPort);
     terminate();
   }
   else

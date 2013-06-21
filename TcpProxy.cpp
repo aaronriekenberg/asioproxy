@@ -71,8 +71,7 @@ void TcpProxy::createAcceptors()
                  [&] (const boost::asio::ip::tcp::endpoint& localEndpoint)
                  {
                    return TcpProxyClientAcceptor::create(
-                     m_ioServicePool, localEndpoint,
-                     proxyOptions.getRemoteAddressPort());
+                     m_ioServicePool, localEndpoint);
                  });
 
   // start acceptors

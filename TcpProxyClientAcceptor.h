@@ -3,8 +3,6 @@
 
 #include <boost/asio.hpp>
 #include <memory>
-#include <string>
-#include <tuple>
 #include "TcpProxySession.h"
 
 namespace asioproxy
@@ -21,8 +19,7 @@ public:
 
   static SharedPtr create(
     IoServicePool& ioServicePool,
-    const boost::asio::ip::tcp::endpoint& localEndpoint,
-    const std::tuple<std::string, std::string>& remoteAddressAndPort);
+    const boost::asio::ip::tcp::endpoint& localEndpoint);
 
   virtual ~TcpProxyClientAcceptor();
 
@@ -36,8 +33,7 @@ private:
 
   TcpProxyClientAcceptor(
     IoServicePool& ioServicePool,
-    const boost::asio::ip::tcp::endpoint& localEndpoint,
-    const std::tuple<std::string, std::string>& remoteAddressAndPort);
+    const boost::asio::ip::tcp::endpoint& localEndpoint);
 
   void registerForAccept();
 
@@ -48,8 +44,6 @@ private:
   IoServicePool& m_ioServicePool;
 
   boost::asio::ip::tcp::acceptor m_acceptor;
-
-  std::tuple<std::string, std::string> m_remoteAddressAndPort;
 
 };
 
