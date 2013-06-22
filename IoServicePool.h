@@ -7,40 +7,38 @@
 #include <thread>
 #include <vector>
 
-namespace asioproxy
-{
+namespace asioproxy {
 
-class IoServicePool
-{
+class IoServicePool {
 public:
 
-  explicit IoServicePool(size_t poolSize);
+	explicit IoServicePool(size_t poolSize);
 
-  virtual ~IoServicePool() = default;
+	virtual ~IoServicePool() = default;
 
-  void runIoThreads();
+	void runIoThreads();
 
-  boost::asio::io_service& getIoService();
+	boost::asio::io_service& getIoService();
 
 private:
 
-  typedef std::shared_ptr<boost::asio::io_service> IoServicePtr;
+	typedef std::shared_ptr<boost::asio::io_service> IoServicePtr;
 
-  typedef std::shared_ptr<boost::asio::io_service::work> WorkPtr;
+	typedef std::shared_ptr<boost::asio::io_service::work> WorkPtr;
 
-  typedef std::shared_ptr<std::thread> ThreadPtr;
+	typedef std::shared_ptr<std::thread> ThreadPtr;
 
-  IoServicePool(const IoServicePool& rhs) = delete;
+	IoServicePool(const IoServicePool& rhs) = delete;
 
-  IoServicePool& operator=(const IoServicePool& rhs) = delete;
+	IoServicePool& operator=(const IoServicePool& rhs) = delete;
 
-  std::vector<IoServicePtr> m_ioServiceVector;
+	std::vector<IoServicePtr> m_ioServiceVector;
 
-  std::vector<WorkPtr> m_workVector;
+	std::vector<WorkPtr> m_workVector;
 
-  size_t m_nextIoServiceIndex = 0;
+	size_t m_nextIoServiceIndex = 0;
 
-  std::mutex m_mutex;
+	std::mutex m_mutex;
 
 };
 

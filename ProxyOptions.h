@@ -6,61 +6,58 @@
 #include <tuple>
 #include <vector>
 
-namespace asioproxy
-{
+namespace asioproxy {
 
-class ProxyOptions
-{
+class ProxyOptions {
 public:
 
-  static const ProxyOptions& createInstance(
-    int argc, char** argv);
+	static const ProxyOptions& createInstance(int argc, char** argv);
 
-  static const ProxyOptions& getInstance();
+	static const ProxyOptions& getInstance();
 
-  typedef std::tuple<std::string, std::string> AddressAndPort;
+	typedef std::tuple<std::string, std::string> AddressAndPort;
 
-  const std::vector<AddressAndPort>& getLocalAddressPortVector() const;
+	const std::vector<AddressAndPort>& getLocalAddressPortVector() const;
 
-  const AddressAndPort& getRemoteAddressPort() const;
+	const AddressAndPort& getRemoteAddressPort() const;
 
-  size_t getBufferSize() const;
+	size_t getBufferSize() const;
 
-  std::chrono::milliseconds getConnectTimeout() const;
+	std::chrono::milliseconds getConnectTimeout() const;
 
-  size_t getNumThreads() const;
+	size_t getNumThreads() const;
 
-  bool isDebug() const;
+	bool isDebug() const;
 
-  bool isNoDelay() const;
+	bool isNoDelay() const;
 
 private:
 
-  ~ProxyOptions() = delete;
+	~ProxyOptions() = delete;
 
-  ProxyOptions(const ProxyOptions& rhs) = delete;
+	ProxyOptions(const ProxyOptions& rhs) = delete;
 
-  ProxyOptions& operator=(const ProxyOptions& rhs) = delete;
+	ProxyOptions& operator=(const ProxyOptions& rhs) = delete;
 
-  ProxyOptions(int argc, char** argv);
+	ProxyOptions(int argc, char** argv);
 
-  AddressAndPort parseAddressPortString(const std::string& addressPortString);
+	AddressAndPort parseAddressPortString(const std::string& addressPortString);
 
-  static ProxyOptions* m_pInstance;
+	static ProxyOptions* m_pInstance;
 
-  std::vector<AddressAndPort> m_localAddressPortVector;
+	std::vector<AddressAndPort> m_localAddressPortVector;
 
-  AddressAndPort m_remoteAddressPort;
+	AddressAndPort m_remoteAddressPort;
 
-  size_t m_bufferSize = 0;
+	size_t m_bufferSize = 0;
 
-  std::chrono::milliseconds m_connectTimeoutMilliseconds;
+	std::chrono::milliseconds m_connectTimeoutMilliseconds;
 
-  size_t m_numThreads = 0;
+	size_t m_numThreads = 0;
 
-  bool m_debug = false;
+	bool m_debug = false;
 
-  bool m_noDelay = false;
+	bool m_noDelay = false;
 
 };
 

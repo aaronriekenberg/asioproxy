@@ -4,24 +4,23 @@
 #include <boost/system/error_code.hpp>
 #include <string>
 
-namespace asioproxy
-{
+namespace asioproxy {
 
-class BoostSystemUtil
-{
+class BoostSystemUtil {
 public:
 
-  static std::string buildErrorCodeString(
-    const boost::system::error_code& errorCode);
+	static std::string buildErrorCodeString(
+			const boost::system::error_code& errorCode);
 
 private:
 
-  BoostSystemUtil() = delete;
+	BoostSystemUtil() = delete;
 
-  ~BoostSystemUtil() = delete;
-
-};
+	~BoostSystemUtil() = delete;
 
 };
+
+}
+;
 
 #endif

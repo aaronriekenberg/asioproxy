@@ -4,36 +4,34 @@
 #include <memory>
 #include "IoServicePool.h"
 
-namespace asioproxy
-{
+namespace asioproxy {
 
-class TcpProxy
-{
+class TcpProxy {
 public:
 
-  typedef std::shared_ptr<TcpProxy> SharedPtr;
+	typedef std::shared_ptr<TcpProxy> SharedPtr;
 
-  static SharedPtr create();
+	static SharedPtr create();
 
-  virtual ~TcpProxy();
+	virtual ~TcpProxy();
 
-  void run();
+	void run();
 
 private:
 
-  TcpProxy();
+	TcpProxy();
 
-  TcpProxy(const TcpProxy& rhs) = delete;
+	TcpProxy(const TcpProxy& rhs) = delete;
 
-  TcpProxy& operator=(const TcpProxy& rhs) = delete;
+	TcpProxy& operator=(const TcpProxy& rhs) = delete;
 
-  void logStartupInfo();
+	void logStartupInfo();
 
-  void createAcceptors();
+	void createAcceptors();
 
-  void runIoThreads();
+	void runIoThreads();
 
-  IoServicePool m_ioServicePool;
+	IoServicePool m_ioServicePool;
 
 };
 

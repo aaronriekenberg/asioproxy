@@ -4,52 +4,48 @@
 #include <mutex>
 #include <sstream>
 
-namespace asioproxy
-{
+namespace asioproxy {
 
-class Log
-{
+class Log {
 public:
 
-  static Log getInfoInstance();
+	static Log getInfoInstance();
 
-  static Log getDebugInstance();
+	static Log getDebugInstance();
 
-  static bool isDebugEnabled();
+	static bool isDebugEnabled();
 
-  static void setDebugEnabled(bool debugEnabled);
+	static void setDebugEnabled(bool debugEnabled);
 
-  template <typename T>
-  Log& operator<<(const T& t)
-  {
-    if (m_enabled)
-    {
-      m_stringstream << t;
-    }
-    return *this;
-  }
+	template<typename T>
+	Log& operator<<(const T& t) {
+		if (m_enabled) {
+			m_stringstream << t;
+		}
+		return *this;
+	}
 
-  Log(Log&& rhs);
+	Log(Log&& rhs);
 
-  Log& operator=(Log&& rhs);
+	Log& operator=(Log&& rhs);
 
-  ~Log();
+	~Log();
 
 private:
 
-  explicit Log(bool enabled);
+	explicit Log(bool enabled);
 
-  Log(const Log& rhs) = delete;
+	Log(const Log& rhs) = delete;
 
-  Log& operator=(const Log& rhs) = delete;
+	Log& operator=(const Log& rhs) = delete;
 
-  static bool m_debugEnabled;
+	static bool m_debugEnabled;
 
-  static std::mutex m_logMutex;
+	static std::mutex m_logMutex;
 
-  bool m_enabled;
+	bool m_enabled;
 
-  std::stringstream m_stringstream;
+	std::stringstream m_stringstream;
 
 };
 

@@ -5,34 +5,29 @@
 #include <memory>
 #include <thread>
 
-namespace asioproxy
-{
+namespace asioproxy {
 
-class IoThread
-{
+class IoThread {
 public:
 
-  static std::shared_ptr<std::thread> create(
-    size_t ioThreadNumber,
-    boost::asio::io_service& ioService);
+	static std::shared_ptr<std::thread> create(size_t ioThreadNumber,
+			boost::asio::io_service& ioService);
 
-  virtual ~IoThread() = default;
+	virtual ~IoThread() = default;
 
-  IoThread(const IoThread& rhs) = default;
+	IoThread(const IoThread& rhs) = default;
 
-  void operator()();
+	void operator()();
 
 private:
 
-  IoThread& operator=(const IoThread& rhs) = delete;
+	IoThread& operator=(const IoThread& rhs) = delete;
 
-  IoThread(
-    size_t ioThreadNumber,
-    boost::asio::io_service& ioService);
+	IoThread(size_t ioThreadNumber, boost::asio::io_service& ioService);
 
-  const size_t m_ioThreadNumber;
+	const size_t m_ioThreadNumber;
 
-  boost::asio::io_service& m_ioService;
+	boost::asio::io_service& m_ioService;
 
 };
 

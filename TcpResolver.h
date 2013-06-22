@@ -5,30 +5,27 @@
 #include <string>
 #include <tuple>
 
-namespace asioproxy
-{
+namespace asioproxy {
 
-class TcpResolver
-{
+class TcpResolver {
 public:
 
-  TcpResolver();
+	TcpResolver();
 
-  virtual ~TcpResolver() = default;
+	virtual ~TcpResolver() = default;
 
-  boost::asio::ip::tcp::endpoint
-  resolve(
-    const std::tuple<std::string, std::string>& addressPortPair);
+	boost::asio::ip::tcp::endpoint
+	resolve(const std::tuple<std::string, std::string>& addressPortPair);
 
 private:
 
-  TcpResolver(const TcpResolver& rhs) = delete;
+	TcpResolver(const TcpResolver& rhs) = delete;
 
-  TcpResolver& operator=(const TcpResolver& rhs) = delete;
+	TcpResolver& operator=(const TcpResolver& rhs) = delete;
 
-  boost::asio::io_service m_ioService;
+	boost::asio::io_service m_ioService;
 
-  boost::asio::ip::tcp::resolver m_resolver;
+	boost::asio::ip::tcp::resolver m_resolver;
 
 };
 
