@@ -22,8 +22,8 @@ std::string timeString() {
 	char charBuffer[80];
 	std::strftime(charBuffer, 80, "%Y-%b-%d %H:%M:%S", &tmStruct);
 	ss << charBuffer << '.' << std::right << std::setw(6) << std::setfill('0')
-			<< (std::chrono::duration_cast < std::chrono::microseconds
-					> (now.time_since_epoch()).count() % std::micro::den);
+			<< (std::chrono::duration_cast<std::chrono::microseconds>(
+					now.time_since_epoch()).count() % std::micro::den);
 	return ss.str();
 }
 
@@ -67,7 +67,7 @@ Log& Log::operator=(Log&& rhs) {
 
 Log::~Log() {
 	if (m_enabled) {
-		std::lock_guard < std::mutex > lock(m_logMutex);
+		std::lock_guard<std::mutex> lock(m_logMutex);
 		std::cout << m_stringstream.str() << std::endl;
 	}
 }

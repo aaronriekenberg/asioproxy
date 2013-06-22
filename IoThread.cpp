@@ -6,8 +6,8 @@ namespace asioproxy {
 
 std::shared_ptr<std::thread> IoThread::create(size_t ioThreadNumber,
 		boost::asio::io_service& ioService) {
-	return std::shared_ptr < std::thread
-			> (new std::thread(IoThread(ioThreadNumber, ioService)));
+	return std::shared_ptr<std::thread>(
+			new std::thread(IoThread(ioThreadNumber, ioService)));
 }
 
 void IoThread::operator()() {

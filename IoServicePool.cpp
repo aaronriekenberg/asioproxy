@@ -32,7 +32,7 @@ void IoServicePool::runIoThreads() {
 }
 
 boost::asio::io_service& IoServicePool::getIoService() {
-	std::lock_guard < std::mutex > lock(m_mutex);
+	std::lock_guard<std::mutex> lock(m_mutex);
 
 	boost::asio::io_service& retVal = *(m_ioServiceVector.at(
 			m_nextIoServiceIndex));
