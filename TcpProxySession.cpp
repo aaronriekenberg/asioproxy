@@ -42,12 +42,12 @@ void TcpProxySession::handleClientSocketAccepted() {
 	const ProxyOptions::AddressAndPort& remoteAddressPort =
 			ProxyOptions::getInstance().getRemoteAddressPort();
 
-	Log::getInfoInstance() << "begin resolving " << std::get < 0
-			> (remoteAddressPort) << ":" << std::get < 1 > (remoteAddressPort);
+	Log::getInfoInstance() << "begin resolving "
+			<< std::get<0>(remoteAddressPort) << ":"
+			<< std::get<1>(remoteAddressPort);
 
-	boost::asio::ip::tcp::resolver::query query(
-			std::get < 0 > (remoteAddressPort),
-			std::get < 1 > (remoteAddressPort));
+	boost::asio::ip::tcp::resolver::query query(std::get<0>(remoteAddressPort),
+			std::get<1>(remoteAddressPort));
 	auto sharedThis = shared_from_this();
 	m_resolver.async_resolve(query, [=] (const boost::system::error_code& error,
 			boost::asio::ip::tcp::resolver::iterator iterator)
@@ -101,9 +101,9 @@ void TcpProxySession::handleRemoteEndpointResolved(
 	if (error) {
 		const ProxyOptions::AddressAndPort& remoteAddressPort =
 				ProxyOptions::getInstance().getRemoteAddressPort();
-		Log::getInfoInstance() << "failed to resolve " << std::get < 0
-				> (remoteAddressPort) << ":" << std::get < 1
-				> (remoteAddressPort);
+		Log::getInfoInstance() << "failed to resolve "
+				<< std::get<0>(remoteAddressPort) << ":"
+				<< std::get<1>(remoteAddressPort);
 		terminate();
 	} else {
 		boost::asio::ip::tcp::endpoint remoteEndpoint = *iterator;
