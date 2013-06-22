@@ -57,9 +57,8 @@ void TcpProxySession::handleClientSocketAccepted() {
 }
 
 TcpProxySession::TcpProxySession(boost::asio::io_service& ioService) :
-		m_ioService(ioService), m_clientSocket(ioService), m_resolver(
-				ioService), m_remoteSocket(ioService), m_connectTimeoutTimer(
-				ioService) {
+		m_clientSocket(ioService), m_resolver(ioService), m_remoteSocket(
+				ioService), m_connectTimeoutTimer(ioService) {
 	if (Log::isDebugEnabled()) {
 		Log::getDebugInstance() << "TcpProxySession::TcpProxySession " << this;
 	}

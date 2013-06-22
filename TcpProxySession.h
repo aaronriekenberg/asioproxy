@@ -52,8 +52,6 @@ private:
 
 	void handleClientWriteFinished(const boost::system::error_code& error);
 
-	boost::asio::io_service& m_ioService;
-
 	boost::asio::ip::tcp::socket m_clientSocket;
 
 	boost::asio::ip::tcp::resolver m_resolver;
