@@ -38,36 +38,10 @@ void TcpProxy::logStartupInfo() {
 }
 
 void TcpProxy::createAcceptors() {
-	const ProxyOptions& proxyOptions = ProxyOptions::getInstance();
-
 	TcpResolver tcpResolver;
-
-	// resolve local endpoints
-	std::vector<boost::asio::ip::tcp::endpoint> localEndpointVector;
-	localEndpointVector.reserve(
-			proxyOptions.getLocalAddressPortVector().size());
-	std::transform(proxyOptions.getLocalAddressPortVector().begin(),
-			proxyOptions.getLocalAddressPortVector().end(),
-			std::back_inserter(localEndpointVector),
-			[&] (const ProxyOptions::AddressAndPort& localAddressAndPort)
-			{
-				return tcpResolver.resolve(localAddressAndPort);
-			});
-
-	// create acceptors
-	std::vector<TcpProxyClientAcceptor::SharedPtr> acceptorVector;
-	acceptorVector.reserve(localEndpointVector.size());
-	std::transform(localEndpointVector.begin(), localEndpointVector.end(),
-			std::back_inserter(acceptorVector),
-			[&] (const boost::asio::ip::tcp::endpoint& localEndpoint)
-			{
-				return TcpProxyClientAcceptor::create(
-						m_ioServicePool, localEndpoint);
-			});
-
-	// start acceptors
-	for (auto pAcceptor : acceptorVector) {
-		pAcceptor->start();
+	for (const auto& localAddressPort : ProxyOptions::getInstance().getLocalAddressPortVector()) {
+		auto localEndpoint = tcpResolver.resolve(localAddressPort);
+		TcpProxyClientAcceptor::create(m_ioServicePool, localEndpoint)->start();
 	}
 }
 
