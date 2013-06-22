@@ -149,7 +149,7 @@ ProxyOptions::AddressAndPort ProxyOptions::parseAddressPortString(
 				std::string("invalid address:port ") + addressPortString);
 	}
 
-	return std::make_tuple(addressString, portString);
+	return AddressAndPort(addressString, portString);
 }
 
 }
