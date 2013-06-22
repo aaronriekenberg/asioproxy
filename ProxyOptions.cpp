@@ -61,20 +61,33 @@ ProxyOptions::ProxyOptions(int argc, char** argv) {
 	long connectTimeoutMS = 0;
 
 	boost::program_options::options_description desc("Allowed options");
-	desc.add_options()("help,h", "show help message")("local-address,l",
+	desc.add_options()
+
+	("help,h", "show help message")
+
+	("local-address,l",
 			boost::program_options::value<std::vector<std::string> >(),
-			"local address")("remote-address,r",
-			boost::program_options::value<std::string>(), "remote address")(
-			"buffer-size,b",
+			"local address")
+
+	("remote-address,r", boost::program_options::value<std::string>(),
+			"remote address")
+
+	("buffer-size,b",
 			boost::program_options::value<size_t>(&m_bufferSize)->default_value(
-					DEFAULT_BUFFER_SIZE), "buffer size (bytes)")(
-			"connect-timeout,c",
+					DEFAULT_BUFFER_SIZE), "buffer size (bytes)")
+
+	("connect-timeout,c",
 			boost::program_options::value<long>(&connectTimeoutMS)->default_value(
 					DEFAULT_CONNECT_TIMEOUT_MS),
-			"connect timeout (milliseconds)")("num-threads,t",
+			"connect timeout (milliseconds)")
+
+	("num-threads,t",
 			boost::program_options::value<size_t>(&m_numThreads)->default_value(
-					std::thread::hardware_concurrency()), "number of threads")(
-			"debug,d", "debug")("no-delay,n", "no delay");
+					std::thread::hardware_concurrency()), "number of threads")
+
+	("debug,d", "debug")
+
+	("no-delay,n", "no delay");
 
 	boost::program_options::variables_map vm;
 	boost::program_options::store(
