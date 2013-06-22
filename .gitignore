@@ -1,0 +1,12 @@
+/BoostSystemUtil.o
+/IoServicePool.o
+/IoThread.o
+/Log.o
+/Main.o
+/proxy
+/ProxyOptions.o
+/TcpProxy.o
+/TcpProxyClientAcceptor.o
+/TcpProxySession.o
+/TcpResolver.o
+/ThreadName.o
