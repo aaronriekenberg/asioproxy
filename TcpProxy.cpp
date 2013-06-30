@@ -10,10 +10,6 @@ TcpProxy::SharedPtr TcpProxy::create() {
 	return SharedPtr(new TcpProxy);
 }
 
-TcpProxy::~TcpProxy() {
-
-}
-
 void TcpProxy::run() {
 	logStartupInfo();
 	createAcceptors();

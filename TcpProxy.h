@@ -13,7 +13,7 @@ public:
 
 	static SharedPtr create();
 
-	virtual ~TcpProxy();
+	virtual ~TcpProxy() = default;
 
 	void run();
 
