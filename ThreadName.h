@@ -14,11 +14,7 @@ public:
 
 private:
 
-	static const std::string m_unknownThreadName;
-
-	// Should use std::thread_local, but it's not supported until g++ 4.8
-	// which I don't have yet.
-	static __thread std::string* m_pThreadName;
+	static thread_local std::string m_threadName;
 
 	ThreadName() = delete;
 

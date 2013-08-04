@@ -2,23 +2,14 @@
 
 namespace asioproxy {
 
-const std::string ThreadName::m_unknownThreadName = "Unknown";
-
-__thread std::string* ThreadName::m_pThreadName = nullptr;
+thread_local std::string ThreadName::m_threadName = "unknown";
 
 void ThreadName::set(const std::string& name) {
-	if (m_pThreadName) {
-		delete m_pThreadName;
-	}
-	m_pThreadName = new std::string(name);
+	m_threadName = name;
 }
 
 const std::string& ThreadName::get() {
-	const std::string* pThreadName = m_pThreadName;
-	if (pThreadName) {
-		return *pThreadName;
-	}
-	return m_unknownThreadName;
+	return m_threadName;
 }
 
 }
